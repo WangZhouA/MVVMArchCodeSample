@@ -1,0 +1,6 @@
+<resources>
+    <!-- 自定义控制事件分发的LinearLayout -->
+    <declare-styleable name="ControlDistributeLinearLayout">
+        <attr name="distribute_event" format="boolean" />
+    </declare-styleable>
+</resources>

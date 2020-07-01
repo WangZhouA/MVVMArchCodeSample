@@ -1,0 +1,141 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion SysConfig.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion SysConfig.minSdkVersion
+        targetSdkVersion SysConfig.targetSdkVersion
+
+        versionCode 1
+        versionName "1.0"
+
+        consumerProguardFiles "proguard-rules.pro"
+
+        checkMVVMConfigProperty(mvvmConfig.include.rxBinding)
+        manifestPlaceholders = [
+                "isClickInterval": mvvmConfig.include.rxBinding
+        ]
+    }
+
+    dataBinding {
+        enabled true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            ext.enableCrashlytics = false
+            ext.alwaysUpdateBuildId = false
+            aaptOptions {
+                cruncherEnabled false
+            }
+        }
+    }
+}
+
+dependencies {
+    api fileTree(include: ['*.jar'], dir: 'libs')
+
+    // 支持库
+    api Deps.appcompat
+    api Deps.constraintLayout
+    api Deps.viewModel
+    api Deps.liveData
+    api Deps.lifecycle
+    api Deps.viewModelSavedState
+    api Deps.lifecycleJava8
+
+    // 以上是绝对必备的库
+
+    checkMVVMConfigProperty(mvvmConfig.include.recyclerView)
+    if (mvvmConfig.include.recyclerView) {
+        api Deps.recyclerView
+    } else {
+        compileOnly Deps.recyclerView
+    }
+
+    checkMVVMConfigProperty(mvvmConfig.include.swiperefreshlayout)
+    if (mvvmConfig.include.swiperefreshlayout) {
+        api Deps.swiperefreshlayout
+    } else {
+        compileOnly Deps.swiperefreshlayout
+    }
+
+    /**
+     * 监控应用的生命周期
+     */
+    checkMVVMConfigProperty(mvvmConfig.include.lifecycleProcess)
+    if (mvvmConfig.include.lifecycleProcess) {
+        api Deps.lifecycleProcess
+    } else {
+        compileOnly Deps.lifecycleProcess
+    }
+
+    // 响应式
+    api Deps.rxAndroid2
+    api Deps.rxJava2
+
+    //rxBinding
+    checkMVVMConfigProperty(mvvmConfig.include.rxBinding)
+    if (mvvmConfig.include.rxBinding) {
+        api(Deps.rxBinding) {
+            exclude group: 'com.android.support'
+        }
+    } else {
+        compileOnly(Deps.rxBinding) {
+            exclude group: 'com.android.support'
+        }
+    }
+
+    // 网络
+    checkMVVMConfigProperty(mvvmConfig.include.retrofit2)
+    if (mvvmConfig.include.retrofit2) {
+        api Deps.retrofit2
+        api Deps.retrofit2RxJava2
+        // JSON
+        api Deps.gson
+        api Deps.gsonConverter
+    } else {
+        compileOnly Deps.retrofit2
+        compileOnly Deps.retrofit2RxJava2
+        compileOnly Deps.gsonConverter
+    }
+
+    // 数据库
+    checkMVVMConfigProperty(mvvmConfig.include.room)
+    if (mvvmConfig.include.room) {
+        api Deps.roomRuntime
+        api Deps.roomRxJava
+        annotationProcessor Deps.roomCompiler
+    } else {
+        compileOnly Deps.roomRuntime
+    }
+
+    // 图片加载
+    checkMVVMConfigProperty(mvvmConfig.include.glide)
+    if (mvvmConfig.include.glide) {
+        api Deps.glide
+        annotationProcessor Deps.glideCompiler
+    } else {
+        compileOnly Deps.glide
+    }
+
+    // 内存泄露
+    checkMVVMConfigProperty(mvvmConfig.include.leakCanary2)
+    if (mvvmConfig.include.leakCanary2) {
+        debugImplementation Deps.leakCanary2
+    }
+
+    // 加载状态
+    api 'com.kingja.loadsir:loadsir:1.3.8'
+}

@@ -1,0 +1,17 @@
+buildscript {
+    apply from: 'MVVMArchCode/dependencies.gradle'
+
+    addRepository(repositories)
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.4.2'
+    }
+}
+
+allprojects {
+    addRepository(repositories)
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
